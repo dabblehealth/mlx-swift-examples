@@ -787,6 +787,7 @@ public struct Idefics3ProcessorConfiguration: Codable, Sendable {
     public let imageMean: [CGFloat]
     public let imageStd: [CGFloat]
     public let size: Size
+    public let maxImageSize: Size?
     public let imageSequenceLength: Int?
 
     public var imageMeanTuple: (CGFloat, CGFloat, CGFloat) {
@@ -800,6 +801,7 @@ public struct Idefics3ProcessorConfiguration: Codable, Sendable {
         case imageMean = "image_mean"
         case imageStd = "image_std"
         case size
+        case maxImageSize = "max_image_size"
         case imageSequenceLength = "image_seq_len"
     }
 }
@@ -809,7 +811,7 @@ public struct Idefics3ProcessorConfiguration: Codable, Sendable {
 public class Idefics3Processor: UserInputProcessor {
     private let config: Idefics3ProcessorConfiguration
     private let tokenizer: any Tokenizer
-    private let fixedImageSize = 384
+    private var fixedImageSize: Int { config.maxImageSize?.longestEdge ?? 384 }
 
     // From the Python code and default config, we know image_token_id is usually 49153.
     // Hardcode this since we can't pass it in or rely on it from the processor config.
